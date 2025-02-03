@@ -22,11 +22,11 @@ export default function EffectsToolbarBottomActions({onTabChange}: Props) {
       <RestartSessionButton
         onRestartSession={() => onTabChange(OBJECT_TOOLBAR_INDEX)}
       />
-      <PrimaryCTAButton
+      {/* <PrimaryCTAButton
         onClick={handleSwitchToMoreOptionsTab}
         endIcon={<ChevronRight />}>
         Next
-      </PrimaryCTAButton>
+      </PrimaryCTAButton> */}
     </ToolbarBottomActionsWrapper>
   );
 }

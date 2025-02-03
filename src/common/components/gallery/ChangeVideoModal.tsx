@@ -7,6 +7,7 @@ import {isStreamingAtom, uploadingStateAtom, VideoData} from '@/demo/atoms';
 import {useAtomValue, useSetAtom} from 'jotai';
 import {ComponentType, useCallback} from 'react';
 import {useNavigate} from 'react-router-dom';
+import AllVideoGalleryModal from './AllVideoGalleryModal';
 
 type Props = {
   videoGalleryModalTrigger?: ComponentType<VideoGalleryTriggerProps>;
@@ -58,12 +59,21 @@ export default function ChangeVideoModal({
   }
 
   return (
-    <DemoVideoGalleryModal
-      trigger={VideoGalleryModalTriggerComponent}
-      showUploadInGallery={showUploadInGallery}
-      onOpen={handlePauseOrAbortVideo}
-      onSelect={handleSwitchVideos}
-      onUploadVideoError={handleUploadVideoError}
-    />
+    <div>
+      <DemoVideoGalleryModal
+        trigger={VideoGalleryModalTriggerComponent}
+        showUploadInGallery={showUploadInGallery}
+        onOpen={handlePauseOrAbortVideo}
+        onSelect={handleSwitchVideos}
+        onUploadVideoError={handleUploadVideoError}
+      />
+      <AllVideoGalleryModal
+        trigger={VideoGalleryModalTriggerComponent}
+        showUploadInGallery={showUploadInGallery}
+        onOpen={handlePauseOrAbortVideo}
+        onSelect={handleSwitchVideos}
+        onUploadVideoError={handleUploadVideoError}
+      />
+    </div>
   );
 }

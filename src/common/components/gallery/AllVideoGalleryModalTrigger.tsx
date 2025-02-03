@@ -3,7 +3,7 @@ import ResponsiveButton from '@/common/components/button/ResponsiveButton';
 import type {VideoGalleryTriggerProps} from '@/common/components/gallery/DemoVideoGalleryModal';
 import {ImageCopy} from '@carbon/icons-react';
 
-export default function DefaultVideoGalleryModalTrigger({
+export default function AllVideoGalleryModalTrigger({
   onClick,
 }: VideoGalleryTriggerProps) {
   return (
@@ -13,7 +13,7 @@ export default function DefaultVideoGalleryModalTrigger({
       className="hover:!bg-black"
       startIcon={<ImageCopy size={20} />}
       onClick={onClick}>
-      Change video
+      Upload All Videos
     </ResponsiveButton>
    
   );

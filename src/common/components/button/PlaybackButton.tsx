@@ -57,7 +57,7 @@ export default function PlaybackButton() {
     <Tooltip message={`${isPlaying ? 'Pause' : 'Play'} (k)`}>
       <button
         disabled={isDisabled}
-        className={`group !rounded-full hover:!bg-white !w-10 !h-10 flex items-center justify-center ${getButtonStyles(isDisabled)}`}
+        className={`group !rounded-full hover:!bg-white !bg-white !w-10 !h-10 flex items-center justify-center ${getButtonStyles(isDisabled)}`}
         onClick={handleClick}>
         {isPlaying ? (
         <i className="fa-solid fa-pause text-black bg-white rounded-full size-6 flex items-center justify-center"></i>

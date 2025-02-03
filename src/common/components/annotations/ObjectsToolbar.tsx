@@ -36,7 +36,7 @@ export default function ObjectsToolbar({onTabChange}: Props) {
     <div className="flex flex-col h-full">
       <ObjectsToolbarHeader />
       <div className="grow w-full overflow-y-auto">
-        {tracklets.map(tracklet => {
+        {/* {tracklets.map(tracklet => {
           return (
             <ToolbarObject
               key={tracklet.id}
@@ -48,7 +48,7 @@ export default function ObjectsToolbar({onTabChange}: Props) {
               }}
             />
           );
-        })}
+        })} */}
         {isAddObjectEnabled && <AddObjectButton />}
         {isObjectLimitReached && <LimitNotice />}
       </div>

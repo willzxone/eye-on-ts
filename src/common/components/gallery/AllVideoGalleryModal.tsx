@@ -1,5 +1,5 @@
  
-import DefaultVideoGalleryModalTrigger from '@/common/components/gallery/DefaultVideoGalleryModalTrigger';
+import AllVideoGalleryModalTrigger from '@/common/components/gallery/AllVideoGalleryModalTrigger';
 import {
   frameIndexAtom,
   sessionAtom,
@@ -60,8 +60,8 @@ type Props = {
   onUploadVideoError?: (error: Error) => void;
 };
 
-export default function DemoVideoGalleryModal({
-  trigger: VideoGalleryModalTrigger = DefaultVideoGalleryModalTrigger,
+export default function AllVideoGalleryModal({
+  trigger: VideoGalleryModalTrigger = AllVideoGalleryModalTrigger,
   showUploadInGallery = false,
   onOpen,
   onSelect,
@@ -119,17 +119,14 @@ export default function DemoVideoGalleryModal({
         </div>
         <Modal.Body>
           <div {...stylex.props(styles.galleryContainer)}>
-          <DemoVideoGallery
+            <DemoVideoGallery
               showUploadInGallery={showUploadInGallery}
               onSelect={video => handleSelect(video)}
               onUpload={video => handleSelect(video, true)}
               onUploadStart={handleUploadVideoStart}
               onUploadError={onUploadVideoError}
               heading={<h3 className="mb-2">
-                Select a video to mask{' '}
-                <span className="hidden md:inline">
-                  with the EYE-ON
-                </span>
+                Select all videos for object classification
               </h3>}
             />
           </div>

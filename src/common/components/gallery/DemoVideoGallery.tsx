@@ -45,6 +45,7 @@ type Props = {
   onUpload: (video: VideoData) => void;
   onUploadStart?: () => void;
   onUploadError?: (error: Error) => void;
+  heading: any;
 };
 
 type VideoPhotoData = Photo &
@@ -59,6 +60,7 @@ export default function DemoVideoGallery({
   onUpload,
   onUploadStart,
   onUploadError,
+  heading,
 }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -166,12 +168,7 @@ export default function DemoVideoGallery({
       <div {...stylex.props(styles.albumContainer)}>
         <div className="pt-0 md:px-16 md:pt-8 md:pb-8">
           <div {...stylex.props(styles.headerContainer)}>
-            <h3 className="mb-2">
-              Select a video to mask{' '}
-              <span className="hidden md:inline">
-                with the {DEMO_SHORT_NAME}
-              </span>
-            </h3>
+            {heading}
           </div>
 
           <PhotoAlbum<VideoPhotoData>
