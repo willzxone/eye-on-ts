@@ -84,5 +84,6 @@ function IconWrapper({icon, title}: IconWrapperProps) {
         {title}
       </div>
     </>
+    
   );
 }
