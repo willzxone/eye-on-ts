@@ -30,9 +30,9 @@ export default function ObjectsToolbarBottomActions({onTabChange}: Props) {
         onRestart={() => onTabChange(OBJECT_TOOLBAR_INDEX)}
       />
       {isTrackingEnabled && <TrackAndPlayButton />}
-      {/* {streamingState === 'full' && (
+      {streamingState === 'full' && (
         <CloseSessionButton onSessionClose={handleSwitchToEffectsTab} />
-      )} */}
+      )}
     </ToolbarBottomActionsWrapper>
   );
 }

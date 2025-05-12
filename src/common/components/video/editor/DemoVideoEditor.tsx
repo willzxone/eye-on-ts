@@ -3,7 +3,7 @@ import TrackletsAnnotation from '@/common/components/annotations/TrackletsAnnota
 import useCloseSessionBeforeUnload from '@/common/components/session/useCloseSessionBeforeUnload';
 import MessagesSnackbar from '@/common/components/snackbar/MessagesSnackbar';
 import useMessagesSnackbar from '@/common/components/snackbar/useDemoMessagesSnackbar';
-import {OBJECT_TOOLBAR_INDEX} from '@/common/components/toolbar/ToolbarConfig';
+import {MORE_OPTIONS_TOOLBAR_INDEX, OBJECT_TOOLBAR_INDEX} from '@/common/components/toolbar/ToolbarConfig';
 import useToolbarTabs from '@/common/components/toolbar/useToolbarTabs';
 import VideoFilmstripWithPlayback from '@/common/components/video/VideoFilmstripWithPlayback';
 import {
@@ -281,7 +281,7 @@ export default function DemoVideoEditor({video: inputVideo}: Props) {
         </div>
       )}
       <div {...stylex.props(styles.container)}>
-        <VideoEditor
+         <VideoEditor
           video={inputVideo}
           layers={layers}
           loading={session == null}>

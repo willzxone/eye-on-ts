@@ -137,18 +137,41 @@ export default function DemoVideoGallery({
       />
     ) : (
       <VideoPhoto
-        src={url}
-        poster={posterUrl}
-        style={style}
-        onClick={() => {
-          navigate(location.pathname, {
-            state: {
-              video,
+      src={url}
+      poster={posterUrl}
+      style={style}
+      onClick={async () => {
+        // navigate(location.pathname, {
+        //   state: {
+        //     video,
+        //   },
+        // });
+        // onSelect?.(video);
+
+        // Trigger the backend process
+        try {
+          const filename = video.path.split("/").pop();                // "01_dog.mp4"
+           const response = await fetch(`http://localhost:7263/gallery/process/${filename}`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({}),
             },
-          });
-          onSelect?.(video);
-        }}
-      />
+          );
+
+          if (!response.ok) {
+            throw new Error(`Failed to process video: ${response.statusText}`);
+          }
+
+          const result = await response.json();
+          console.log('Processing result:', result);
+        } catch (error) {
+          console.error('Error processing video:', error);
+        }
+      }}
+    />
     );
   };
 

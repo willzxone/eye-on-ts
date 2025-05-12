@@ -17,8 +17,8 @@ export default function DesktopToolbar({tabIndex, onTabChange}: Props) {
 
   const tabs = [
     <ObjectsToolbar key="objects" onTabChange={onTabChange} />,
-    // <EffectsToolbar key="effects" onTabChange={onTabChange} />,
-    // <MoreOptionsToolbar key="options" onTabChange={onTabChange} />,
+    <EffectsToolbar key="effects" onTabChange={onTabChange} />,
+    <MoreOptionsToolbar key="options" onTabChange={onTabChange} />,
   ];
 
   return (

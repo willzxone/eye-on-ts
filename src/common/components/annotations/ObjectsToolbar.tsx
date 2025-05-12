@@ -1,7 +1,7 @@
  
 import AddObjectButton from '@/common/components/annotations/AddObjectButton';
 import FirstClickView from '@/common/components/annotations/FirstClickView';
-import LimitNotice from '@/common/components/annotations/LimitNotice';
+// import LimitNotice from '@/common/components/annotations/LimitNotice';
 import ObjectsToolbarBottomActions from '@/common/components/annotations/ObjectsToolbarBottomActions';
 import ObjectsToolbarHeader from '@/common/components/annotations/ObjectsToolbarHeader';
 import {getObjectLabel} from '@/common/components/annotations/ObjectUtils';
@@ -11,7 +11,7 @@ import {
   activeTrackletObjectIdAtom,
   isAddObjectEnabledAtom,
   isFirstClickMadeAtom,
-  isTrackletObjectLimitReachedAtom,
+  // isTrackletObjectLimitReachedAtom,
   trackletObjectsAtom,
 } from '@/demo/atoms';
 import {useAtomValue, useSetAtom} from 'jotai';
@@ -25,7 +25,7 @@ export default function ObjectsToolbar({onTabChange}: Props) {
   const activeTracklet = useAtomValue(activeTrackletObjectAtom);
   const setActiveTrackletId = useSetAtom(activeTrackletObjectIdAtom);
   const isFirstClickMade = useAtomValue(isFirstClickMadeAtom);
-  const isObjectLimitReached = useAtomValue(isTrackletObjectLimitReachedAtom);
+  // const isObjectLimitReached = useAtomValue(isTrackletObjectLimitReachedAtom);
   const isAddObjectEnabled = useAtomValue(isAddObjectEnabledAtom);
 
   if (!isFirstClickMade) {
@@ -36,7 +36,7 @@ export default function ObjectsToolbar({onTabChange}: Props) {
     <div className="flex flex-col h-full">
       <ObjectsToolbarHeader />
       <div className="grow w-full overflow-y-auto">
-        {/* {tracklets.map(tracklet => {
+        {tracklets.map(tracklet => {
           return (
             <ToolbarObject
               key={tracklet.id}
@@ -48,9 +48,9 @@ export default function ObjectsToolbar({onTabChange}: Props) {
               }}
             />
           );
-        })} */}
+        })}
         {isAddObjectEnabled && <AddObjectButton />}
-        {isObjectLimitReached && <LimitNotice />}
+        {/* {isObjectLimitReached && <LimitNotice />} */}
       </div>
       <ObjectsToolbarBottomActions onTabChange={onTabChange} />
     </div>
