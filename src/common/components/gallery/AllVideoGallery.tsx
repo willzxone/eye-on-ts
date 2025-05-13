@@ -1,16 +1,15 @@
  
 import {DemoVideoGalleryQuery} from '@/common/components/gallery/__generated__/DemoVideoGalleryQuery.graphql';
-import VideoGalleryUploadVideo from '@/common/components/gallery/VideoGalleryUploadPhoto';
+// import VideoGalleryUploadVideo from '@/common/components/gallery/VideoGalleryUploadPhoto';
 import VideoPhoto from '@/common/components/gallery/VideoPhoto';
 import useScreenSize from '@/common/screen/useScreenSize';
 import {VideoData} from '@/demo/atoms';
-// import {DEMO_SHORT_NAME} from '@/demo/DemoConfig';
 import {fontSize, fontWeight, spacing} from '@/theme/tokens.stylex';
 import stylex from '@stylexjs/stylex';
 import {useMemo} from 'react';
 import PhotoAlbum, {Photo, RenderPhotoProps} from 'react-photo-album';
 import {graphql, useLazyLoadQuery} from 'react-relay';
-import {useLocation, useNavigate} from 'react-router-dom';
+// import {useLocation, useNavigate} from 'react-router-dom';
 
 const styles = stylex.create({
   container: {
@@ -54,16 +53,14 @@ type VideoPhotoData = Photo &
     isUploadOption: boolean;
   };
 
-export default function DemoVideoGallery({
+export default function AllVideoGallery({
   showUploadInGallery = false,
-  onSelect,
-  onUpload,
-  onUploadStart,
-  onUploadError,
+//   onSelect,
+//   onUpload,
+//   onUploadStart,
+//   onUploadError,
   heading,
 }: Props) {
-  const navigate = useNavigate();
-  const location = useLocation();
   const {isMobile: isMobileScreenSize} = useScreenSize();
 
   const data = useLazyLoadQuery<DemoVideoGalleryQuery>(
@@ -128,64 +125,46 @@ export default function DemoVideoGallery({
     const {style} = imageProps;
     const {url, posterUrl} = video;
 
-    return video.isUploadOption ? (
-      <VideoGalleryUploadVideo
-        style={style}
-        onUpload={handleUploadVideo}
-        onUploadError={onUploadError}
-        onUploadStart={onUploadStart}
-      />
-    ) : (
+    return (
       <VideoPhoto
       src={url}
       poster={posterUrl}
       style={style}
       onClick={async () => {
-        navigate(location.pathname, {
-          state: {
-            video,
-          },
-        });
-        onSelect?.(video);
+        try {
+          const filename = video.path.split("/").pop();                // "01_dog.mp4"
+           const response = await fetch(`http://localhost:7263/gallery/process/${filename}`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({}),
+            },
+          );
 
-        // Trigger the backend process
-        // try {
-        //   const filename = video.path.split("/").pop();                // "01_dog.mp4"
-        //    const response = await fetch(`http://localhost:7263/gallery/process/${filename}`,
-        //     {
-        //       method: 'POST',
-        //       headers: {
-        //         'Content-Type': 'application/json',
-        //       },
-        //       body: JSON.stringify({}),
-        //     },
-        //   );
+          if (!response.ok) {
+            throw new Error(`Failed to process video: ${response.statusText}`);
+          }
 
-        //   if (!response.ok) {
-        //     throw new Error(`Failed to process video: ${response.statusText}`);
-        //   }
-
-        //   const result = await response.json();
-        //   console.log('Processing result:', result);
-        // } catch (error) {
-        //   console.error('Error processing video:', error);
-        // }
+          const result = await response.json();
+          console.log('Processing result:', result);
+        } catch (error) {
+          console.error('Error processing video:', error);
+        }
       }}
     />
     );
   };
 
-  function handleUploadVideo(video: VideoData) {
-    navigate(location.pathname, {
-      state: {
-        video,
-      },
-    });
-    onUpload?.(video);
-  }
-
-  // const descriptionStyle = 'text-sm md:text-base text-gray-400 leading-snug';
-
+//   function handleUploadVideo(video: VideoData) {
+//     navigate(location.pathname, {
+//       state: {
+//         video,
+//       },
+//     });
+//     onUpload?.(video);
+//   }
   return (
     <div {...stylex.props(styles.container)}>
       <div {...stylex.props(styles.albumContainer)}>
