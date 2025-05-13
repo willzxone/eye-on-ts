@@ -13,6 +13,7 @@ import {Route, Routes} from 'react-router-dom';
 import Auth from "@/auth/auth";
 import ResetPassword from '@/auth/resetPassword';
 import ProtectedRoute from '@/routes/protectedRoute';
+import ProcessVideo from './processVideo';
 
 export default function DemoAppWrapper() {
   const {settings} = useSettingsContext();
@@ -37,6 +38,7 @@ function DemoApp() {
           </Route>
           <Route element={<ProtectedRoute />}>
             <Route path={"home"} element={<SAM2DemoPage />} />
+            <Route path={"process-video"} element={<ProcessVideo />} />
           </Route>
           <Route path="*" element={<PageNotFoundPage />} />
         </Route>

@@ -26,7 +26,7 @@ type Props = {
   onClick: MouseEventHandler<HTMLVideoElement> | undefined;
   src: string;
   poster: string;
-  style: CSSProperties;
+  style?: CSSProperties;
 };
 
 export default function VideoPhoto({src, poster, style, onClick}: Props) {

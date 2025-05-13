@@ -151,7 +151,7 @@ export default function DemoVideoGallery({
         // Trigger the backend process
         // try {
         //   const filename = video.path.split("/").pop();                // "01_dog.mp4"
-        //    const response = await fetch(`http://localhost:7263/gallery/process/${filename}`,
+        //    const response = await fetch(`http://localhost:5000/gallery/process/${filename}`,
         //     {
         //       method: 'POST',
         //       headers: {

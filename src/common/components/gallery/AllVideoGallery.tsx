@@ -1,50 +1,75 @@
- 
-import {DemoVideoGalleryQuery} from '@/common/components/gallery/__generated__/DemoVideoGalleryQuery.graphql';
-// import VideoGalleryUploadVideo from '@/common/components/gallery/VideoGalleryUploadPhoto';
-import VideoPhoto from '@/common/components/gallery/VideoPhoto';
-import useScreenSize from '@/common/screen/useScreenSize';
-import {VideoData} from '@/demo/atoms';
-import {fontSize, fontWeight, spacing} from '@/theme/tokens.stylex';
+import React, { useState, useMemo } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { graphql, useLazyLoadQuery } from 'react-relay';
+import PhotoAlbum, { Photo, RenderPhotoProps } from 'react-photo-album';
 import stylex from '@stylexjs/stylex';
-import {useMemo} from 'react';
-import PhotoAlbum, {Photo, RenderPhotoProps} from 'react-photo-album';
-import {graphql, useLazyLoadQuery} from 'react-relay';
-// import {useLocation, useNavigate} from 'react-router-dom';
+import { fontSize, fontWeight, spacing } from '@/theme/tokens.stylex';
+import useScreenSize from '@/common/screen/useScreenSize';
+import VideoPhoto from '@/common/components/gallery/VideoPhoto';
+import { DemoVideoGalleryQuery } from '@/common/components/gallery/__generated__/DemoVideoGalleryQuery.graphql';
+import { VideoData } from '@/demo/atoms';
 
 const styles = stylex.create({
   container: {
     display: 'flex',
     flexDirection: 'column',
-    marginHorizontal: spacing[1],
-    height: '100%',
-    lineHeight: 1.2,
-    paddingTop: spacing[8],
+    height: '100vh',               // fill viewport
+    boxSizing: 'border-box',
   },
   headerContainer: {
-    marginBottom: spacing[8],
-    fontWeight: fontWeight['medium'],
+    padding: spacing[2],
+    fontWeight: fontWeight.medium,
     fontSize: fontSize['2xl'],
+    boxSizing: 'border-box',
     '@media screen and (max-width: 768px)': {
-      marginTop: spacing[0],
-      marginBottom: spacing[8],
-      marginHorizontal: spacing[4],
-      fontSize: fontSize['xl'],
+      fontSize: fontSize.xl,
     },
   },
   albumContainer: {
-    flex: '1 1 0%',
-    width: '100%',
+    flex: '1 1 auto',
     overflowY: 'auto',
+    padding: spacing[2],
+    boxSizing: 'border-box',
+    position: 'relative',          // so sticky footer works
+  },
+  photoWrapper: {
+    borderWidth: 2,
+    borderStyle: 'solid',
+    borderColor: 'transparent',
+    borderRadius: 4,
+    boxSizing: 'border-box',
+    cursor: 'pointer',
+  },
+  selectedPhoto: {
+    borderColor: '#007BFF',
+  },
+  footerContainer: {
+    position: 'sticky',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: spacing[2],
+    backgroundColor: 'transparent',      // match your page bg
+    textAlign: 'center',
+    boxSizing: 'border-box',
+    // borderTop: '1px solid #DDD',
+  },
+  processButton: {
+    // padding: spacing[2],
+    backgroundColor: '#007BFF',
+    color: '#FFF',
+    border: 'none',
+    borderRadius: 4,
+    cursor: 'pointer',
+    width: '100%',
+    fontWeight: fontWeight.medium,
+    fontSize: fontSize.base,
   },
 });
 
 type Props = {
   showUploadInGallery?: boolean;
-  onSelect?: (video: VideoPhotoData) => void;
-  onUpload: (video: VideoData) => void;
-  onUploadStart?: () => void;
-  onUploadError?: (error: Error) => void;
-  heading: any;
+  heading: React.ReactNode;
 };
 
 type VideoPhotoData = Photo &
@@ -55,14 +80,14 @@ type VideoPhotoData = Photo &
 
 export default function AllVideoGallery({
   showUploadInGallery = false,
-//   onSelect,
-//   onUpload,
-//   onUploadStart,
-//   onUploadError,
   heading,
 }: Props) {
-  const {isMobile: isMobileScreenSize} = useScreenSize();
+  const { isMobile: isMobileScreenSize } = useScreenSize();
+  const [selectedVideos, setSelectedVideos] = useState<VideoPhotoData[]>([]);
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  // 1) Fetch videos via Relay
   const data = useLazyLoadQuery<DemoVideoGalleryQuery>(
     graphql`
       query DemoVideoGalleryQuery {
@@ -74,117 +99,140 @@ export default function AllVideoGallery({
               posterPath
               url
               posterUrl
-              height
               width
-              posterUrl
+              height
             }
           }
         }
       }
     `,
-    {},
+    {}
   );
 
-  const allVideos: VideoPhotoData[] = useMemo(() => {
-    return data.videos.edges.map(video => {
-      return {
-        src: video.node.url,
-        path: video.node.path,
-        poster: video.node.posterPath,
-        posterPath: video.node.posterPath,
-        url: video.node.url,
-        posterUrl: video.node.posterUrl,
-        width: video.node.width,
-        height: video.node.height,
+  // 2) Shape for PhotoAlbum
+  const allVideos: VideoPhotoData[] = useMemo(
+    () =>
+      data.videos.edges.map(({ node }) => ({
+        src: node.url,
+        width: node.width,
+        height: node.height,
+        path: node.path,
+        url: node.url,
+        posterPath: node.posterPath,
+        posterUrl: node.posterUrl,
+        poster: node.posterPath ?? node.posterUrl ?? '',
         isUploadOption: false,
-      } as VideoPhotoData;
-    });
-  }, [data.videos.edges]);
+      })),
+    [data.videos.edges]
+  );
 
-  const shareableVideos: VideoPhotoData[] = useMemo(() => {
-    const filteredVideos = [...allVideos];
-
-    if (showUploadInGallery) {
-      const uploadOption = {
-        src: '',
-        width: 1280,
-        height: 720,
-        poster: '',
-        isUploadOption: true,
-      } as VideoPhotoData;
-      filteredVideos.unshift(uploadOption);
-    }
-
-    return filteredVideos;
+  // 3) Optionally prepend an upload tile
+  const galleryVideos = useMemo(() => {
+    if (!showUploadInGallery) return allVideos;
+    const uploadOption: VideoPhotoData = {
+      src: '',
+      width: 1280,
+      height: 720,
+      path: '',
+      url: '',
+      posterPath: '',
+      posterUrl: '',
+      poster: '',
+      isUploadOption: true,
+    };
+    return [uploadOption, ...allVideos];
   }, [allVideos, showUploadInGallery]);
 
+  // 4) Toggle selection
+  const toggleVideoSelection = (video: VideoPhotoData) =>
+    setSelectedVideos((prev) => {
+      if (prev.some((v) => v.path === video.path)) {
+        return prev.filter((v) => v.path !== video.path);
+      }
+      return [...prev, video];
+    });
+
+  // 5) Process API call
+  const processSelectedVideos = async () => {
+    try {
+      for (const video of selectedVideos) {
+        const filename = video.path.split('/').pop();
+        const resp = await fetch(
+          `http://localhost:7263/gallery/process/${filename}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: '{}',
+          }
+        );
+        if (!resp.ok) throw new Error(resp.statusText);
+        console.log(filename, await resp.json());
+      }
+      alert('All selected videos processed!');
+    } catch (err) {
+      console.error(err);
+      alert('Error processing videos');
+    }
+  };
+
+  // 6) Custom Photo renderer
   const renderPhoto = ({
     photo: video,
     imageProps,
   }: RenderPhotoProps<VideoPhotoData>) => {
-    const {style} = imageProps;
-    const {url, posterUrl} = video;
-
+    const isSelected = selectedVideos.some((v) => v.path === video.path);
     return (
-      <VideoPhoto
-      src={url}
-      poster={posterUrl}
-      style={style}
-      onClick={async () => {
-        try {
-          const filename = video.path.split("/").pop();                // "01_dog.mp4"
-           const response = await fetch(`http://localhost:7263/gallery/process/${filename}`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({}),
-            },
-          );
-
-          if (!response.ok) {
-            throw new Error(`Failed to process video: ${response.statusText}`);
+      <div
+        {...stylex.props(
+          styles.photoWrapper,
+          isSelected && styles.selectedPhoto
+        )}
+        style={imageProps.style}
+        onClick={(e) => {
+          e.preventDefault();
+          if (video.isUploadOption) {
+            navigate('/upload', { state: { from: location } });
+          } else {
+            toggleVideoSelection(video);
           }
-
-          const result = await response.json();
-          console.log('Processing result:', result);
-        } catch (error) {
-          console.error('Error processing video:', error);
-        }
-      }}
-    />
+        }}
+      >
+        <VideoPhoto
+          src={video.url}
+          poster={video.posterUrl}
+          onClick={() => {}}
+        />
+      </div>
     );
   };
 
-//   function handleUploadVideo(video: VideoData) {
-//     navigate(location.pathname, {
-//       state: {
-//         video,
-//       },
-//     });
-//     onUpload?.(video);
-//   }
   return (
     <div {...stylex.props(styles.container)}>
-      <div {...stylex.props(styles.albumContainer)}>
-        <div className="pt-0 md:px-16 md:pt-8 md:pb-8">
-          <div {...stylex.props(styles.headerContainer)}>
-            {heading}
-          </div>
+      <div {...stylex.props(styles.headerContainer)}>{heading}</div>
 
-          <PhotoAlbum<VideoPhotoData>
-            layout="rows"
-            photos={shareableVideos}
-            targetRowHeight={isMobileScreenSize ? 120 : 200}
-            rowConstraints={{
-              singleRowMaxHeight: isMobileScreenSize ? 120 : 240,
-              maxPhotos: 3,
-            }}
-            renderPhoto={renderPhoto}
-            spacing={4}
-          />
-        </div>
+      <div {...stylex.props(styles.albumContainer)}>
+        <PhotoAlbum<VideoPhotoData>
+          layout="rows"
+          photos={galleryVideos}
+          targetRowHeight={isMobileScreenSize ? 120 : 200}
+          rowConstraints={{
+            singleRowMaxHeight: isMobileScreenSize ? 120 : 240,
+            maxPhotos: 3,
+          }}
+          spacing={4}
+          renderPhoto={renderPhoto}
+        />
+
+        {selectedVideos.length > 0 && (
+          <div {...stylex.props(styles.footerContainer)}>
+            <button
+              {...stylex.props(styles.processButton)}
+              onClick={processSelectedVideos}
+            >
+              Process Selected Videos ({selectedVideos.length})
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
