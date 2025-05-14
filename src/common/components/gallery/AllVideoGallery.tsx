@@ -86,6 +86,7 @@ export default function AllVideoGallery({
   const [selectedVideos, setSelectedVideos] = useState<VideoPhotoData[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
 
   // 1) Fetch videos via Relay
   const data = useLazyLoadQuery<DemoVideoGalleryQuery>(
@@ -153,7 +154,8 @@ export default function AllVideoGallery({
     });
 
   // 5) Process API call
-  const processSelectedVideos = async () => {
+    const processSelectedVideos = async () => {
+    setLoading(true);
     try {
       for (const video of selectedVideos) {
         const filename = video.path.split('/').pop();
@@ -172,6 +174,8 @@ export default function AllVideoGallery({
     } catch (err) {
       console.error(err);
       alert('Error processing videos');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -228,6 +232,7 @@ export default function AllVideoGallery({
             <button
               {...stylex.props(styles.processButton)}
               onClick={processSelectedVideos}
+              disabled={loading}
             >
               Process Selected Videos ({selectedVideos.length})
             </button>
