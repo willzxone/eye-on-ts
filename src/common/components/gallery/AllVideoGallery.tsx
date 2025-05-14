@@ -154,30 +154,57 @@ export default function AllVideoGallery({
     });
 
   // 5) Process API call
-    const processSelectedVideos = async () => {
-    setLoading(true);
-    try {
-      for (const video of selectedVideos) {
-        const filename = video.path.split('/').pop();
-        const resp = await fetch(
-          `http://localhost:7263/gallery/process/${filename}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: '{}',
+      const processSelectedVideos = async () => {
+      setLoading(true);
+      try {
+        for (const video of selectedVideos) {
+          const filename = video.path.split('/').pop();
+          console.log(`Processing ${filename}...`);
+          
+          const resp = await fetch(
+            `http://localhost:7263/gallery/process/${filename}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: '{}',
+            }
+          );
+          
+          if (!resp.ok) throw new Error(resp.statusText);
+          
+          // Check content type to determine response format
+          const contentType = resp.headers.get('content-type');
+          
+          if (contentType && contentType.includes('image/')) {
+            // Response is an image - create a blob URL to display or download
+            const imageBlob = await resp.blob();
+            const imageUrl = URL.createObjectURL(imageBlob);
+            console.log(`${filename} processed - best match image:`, imageUrl);
+            
+            // Here you could:
+            // 1. Store the image URL in state to display in the UI
+            // 2. Open in new tab: window.open(imageUrl)
+            // 3. Add to the selected video object for display
+            
+            // Example: Add the match result to the video object
+            setSelectedVideos(prev => 
+              prev.map(v => v.path === video.path ? 
+                {...v, matchResult: imageUrl} : v)
+            );
+          } else {
+            // Response is JSON
+            const jsonResult = await resp.json();
+            console.log(`${filename} processed:`, jsonResult);
           }
-        );
-        if (!resp.ok) throw new Error(resp.statusText);
-        console.log(filename, await resp.json());
+        }
+        alert('All selected videos processed!');
+      } catch (err) {
+        console.error(err);
+        alert('Error processing videos');
+      } finally {
+        setLoading(false);
       }
-      alert('All selected videos processed!');
-    } catch (err) {
-      console.error(err);
-      alert('Error processing videos');
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
   // 6) Custom Photo renderer
   const renderPhoto = ({
