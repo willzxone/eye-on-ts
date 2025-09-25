@@ -1,50 +1,64 @@
-# React + TypeScript + Vite
+# EYE-On 👁️  
+**Deep Learning Multi-Camera Tracking System**  
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+EYE-On is a real-time multi-camera tracking platform that combines **advanced detection, segmentation, and classification models** to deliver accurate and reliable person and object tracking across multiple video streams.  
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features  
+- **Segmentation with SAM2** – Frame-level object segmentation for precise region extraction.  
+- **Detection with YOLOv8** – Fast and accurate object/person detection in crowded or occluded frames.  
+- **Classification with Vision Transformer (ViT)** – Robust image classification and re-identification to handle occlusion and crowded scenes.  
+- **Multi-Camera Tracking** – Reliable cross-camera identity matching and trajectory visualization.  
+- **Video Upload & Target Selection** – Users can upload video streams, select targets, and visualize real-time tracking results.  
+- **Full Pipeline** – From ingestion of unstructured video → processing → visualization.  
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## 🛠️ Tech Stack  
 
-- Configure the top-level `parserOptions` property like this:
+### Frontend 📂
+- **React 18** with **Vite**  
+- **Relay & GraphQL**  
+- **TailwindCSS + DaisyUI** for modern UI  
+- **Monaco Editor & React-PTS** for visualization and interactivity  
+- **Firebase** for authentication & storage  
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Backend 📂 
+- **Flask 3** with **Strawberry GraphQL**  
+- **YOLOv8** (object detection)  
+- **SAM2** (segmentation)  
+- **Vision Transformer (ViT)** (classification)  
+- **Torch 2.6 + TorchVision**  
+- **Hydra & OmegaConf** for configuration management  
+- **HuggingFace Hub** for model loading  
+- **Decord & AV** for video handling  
+- **Flask-CORS** for cross-origin support  
+
+---
+
+## 📊 Pipeline Overview  
+
+```
+[ Video Input ] → [ SAM2 Segmentation ] → [ YOLOv8 Detection ] → [ ViT Classification ] 
+        ↓
+   [ Multi-Camera Re-ID + Tracking ]
+        ↓
+   [ Real-Time Visualization ]
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+---
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## 🔮 Future Improvements  
+- Support for **real-time streaming (RTSP/Live Feeds)**  
+- Integration with **Edge AI (Jetson / ONNX Runtime)**  
+- Optimized **GPU batch processing**  
+- Enhanced **multi-object re-identification**  
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+---
+
+## 👨‍💻 Author  
+**Waleed Asif**  
+- 🌐 [Portfolio](https://waleedasif.live)  
+- 💼 [LinkedIn](https://linkedin.com/in/waleed--asif)  
+- 🐙 [GitHub](https://github.com/willzxone)  
